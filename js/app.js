@@ -1,35 +1,34 @@
-//json object to hold error messages
-const errors = {
-    nameCanNotBeEmpty: "Please enter a name!",
-    emailBadFormat: "Email should be corretly formatted",
-    checkBoxMustBeSelected: "Atleast one checkbox should be selected",
-    creditCardCanNotBeEmpty: "Please enter a credit card number!",
-    creditCardMustBeDigitsOnly: "Credit card number must be digits only",
-    creditCardMustBeBetween13To16: "Credit card number must be between 13 and 16 digits",
-    zipCanNotBeEmpty: "Zip code can not be empty",
-    cvvCanNotBeEmpty: "CVV can not be empty",
-    zipMustBeDigitsOnly: "Zip code must be digits only",
-    zipMustBe5Digits: "Zip code must be exactly 5 digits",
-    cvvMustBeDigitsOnly: "CVV must be digits only",
-    cvvMustBe3Digits: "CVV code must be exactly 3 digits"
-};
+
 
 //Set focus on the first text field
 //When the page first loads, the first text field should be in focus by default.
 $('#name').focus();
 
-//Validate name field as user is typing in real time
-$('#name').on('keyup',function(){
-    // $('.error-message').remove();
+//Validate fields as user is typing in real time
+$('#name').on('keyup', function () {
     $("label[for='name']+.error-message").remove();
     removeValidationFailedClass();
-    validateNameField();
+    validator.validateNameField();
 });
-$('#mail').on('keyup',function(){
-    // $('.error-message').remove();
+$('#mail').on('keyup', function () {
     $("label[for='mail']+.error-message").remove();
     removeValidationFailedClass();
-    validateEmailField();
+    validator.validateEmailField();
+});
+$('#cc-num').on('keyup', function () {
+    $("#credit-card ~ .error-message").remove();
+    removeValidationFailedClass();
+    validator.validateCreditCardNumber();
+});
+$('#zip').on('keyup', function () {
+    $("#credit-card ~ .error-message").remove();
+    removeValidationFailedClass();
+    validator.validateZipCode();
+});
+$('#cvv').on('keyup', function () {
+    $("#credit-card ~ .error-message").remove();
+    removeValidationFailedClass();
+    validator.validateCVV();
 });
 
 //”Job Role” section
@@ -37,9 +36,9 @@ $('#mail').on('keyup',function(){
 $('#other-title').hide();
 $('#title').on('change', function () {
     let value = $(this).val();
-    if(value === 'other'){
+    if (value === 'other') {
         $('#other-title').show();
-    }else{
+    } else {
         $('#other-title').hide();
     }
 });
@@ -52,9 +51,9 @@ $('#design').on('change', function () {
     //display design dropdown now
     $('#color').parent().show();
 
-    console.log($(this).val());
     let selectedValue = $(this).val();
     if (selectedValue === 'js puns') {
+        $('#color').parent().show();
         $("#color option[selected]").removeAttr('selected');
 
         $("#color option[value='tomato']").hide();
@@ -68,6 +67,7 @@ $('#design').on('change', function () {
         $("#color option[value='cornflowerblue']").attr('selected', true);
 
     } else if (selectedValue === 'heart js') {
+        $('#color').parent().show();
         $("#color option[selected]").removeAttr('selected');
 
         $("#color option[value='tomato']").show();
@@ -79,6 +79,11 @@ $('#design').on('change', function () {
         $("#color option[value='gold']").hide();
 
         $("#color option[value='tomato']").attr('selected', true);
+    }else if (selectedValue === 'no-selection'){
+        //remove selection from color dropdown
+        $("#color option[selected]").removeAttr('selected');
+        //hide color dropdown now
+        $('#color').parent().hide();
     }
 });
 
@@ -95,7 +100,6 @@ $('#total').text(`Total:$${total}`);
 $('input:checkbox').change(function () {
     $('.error-message').remove();
     if ($(this).is(':checked')) {
-        console.log($(this).prop('name'));
         switch ($(this).prop('name')) {
             case 'all':
                 total += 200;
@@ -199,11 +203,19 @@ $('input:checkbox').change(function () {
 "Payment Info" section
 */
 
-$('#payment').on('change',function(){
+//Select credit card payment method by default on page load
+$('#payment').val('credit card');
+updatePaymentSection('credit card');
+
+$('#payment').on('change', function () {
     $('.error-message').remove();
     let selectedValue = $(this).val();
-    console.log(selectedValue);
-    switch(selectedValue){
+    updatePaymentSection(selectedValue);
+});
+
+//Function to update payment section based on payment method selection
+function updatePaymentSection(selectedValue) {
+    switch (selectedValue) {
         case 'credit card':
             $('#paypal').hide();
             $('#bitcoin').hide();
@@ -218,129 +230,52 @@ $('#payment').on('change',function(){
             $('#paypal').hide();
             $('#bitcoin').show();
             $('#credit-card').hide();
-            break;    
+            break;
     }
-});
+}
 
 /*
 Form validation
 */
-$("button[type='submit']").on('click',function(e){
-    console.log("submit");
-    e.preventDefault();
-    //remove all error spans
+$("button[type='submit']").on('click', function (e) {
+    let result=true;
+    
+    //remove all error spans and .validation-failed classes first
     $('.error-message').remove();
     removeValidationFailedClass();
-    validateNameField();
-    validateEmailField();
-    //User must select at least one checkbox under the "Register for Activities" section of the form.
-    if(getCheckedCheckBoxesCount()===0){
-            $('.activities legend').after(getErrorSpan(errors.checkBoxMustBeSelected));
 
-    }   
-
+    result &= validator.validateNameField();
+    result &= validator.validateEmailField(); 
+    result &= validator.validateCheckBox();
     //Validate credit card
-    let creditCardNumber = $('#cc-num').val();
-    let zip = $('#zip').val();
-    let cvv = $('#cvv').val();
-    let isCreditCardANumber = checkIfNumber(creditCardNumber);
-    let isZipANumber = checkIfNumber(zip);
-    let isCVVANumber = checkIfNumber(cvv);
-
-    if($('#payment').val()==='credit card'){
-        let CClength = creditCardNumber.length;
-        let Ziplength = zip.length;
-        let CVVlength = cvv.length;
-
-        if(CVVlength===0){
-            $('#credit-card').after(getErrorSpan(errors.cvvCanNotBeEmpty));
-            $('#cvv').addClass('validation-failed');
-        }
-
-        if(CVVlength>0 && !isCVVANumber){
-            $('#credit-card').after(getErrorSpan(errors.cvvMustBeDigitsOnly));
-            $('#cvv').addClass('validation-failed');
-        }
-        if(CVVlength>0 && isCVVANumber && CVVlength!==3){
-                $('#credit-card').after(getErrorSpan(errors.cvvMustBe3Digits));
-                $('#cvv').addClass('validation-failed');
-        }
-
-        if(Ziplength===0){
-            $('#credit-card').after(getErrorSpan(errors.zipCanNotBeEmpty));
-            $('#zip').addClass('validation-failed');
-        }
-
-        if(Ziplength>0 && !isZipANumber){
-            $('#credit-card').after(getErrorSpan(errors.zipMustBeDigitsOnly));
-            $('#zip').addClass('validation-failed');
-        }
-        if(Ziplength>0 && isZipANumber && Ziplength!==5){
-                $('#credit-card').after(getErrorSpan(errors.zipMustBe5Digits));
-                $('#zip').addClass('validation-failed');
-        }
-
-        if(CClength===0){
-            $('#credit-card').after(getErrorSpan(errors.creditCardCanNotBeEmpty));
-            $('#cc-num').addClass('validation-failed');
-        }
-        if(CClength>0 && !isCreditCardANumber){
-            $('#credit-card').after(getErrorSpan(errors.creditCardMustBeDigitsOnly));
-            $('#cc-num').addClass('validation-failed');
-        }
-        if(CClength>0 && isCreditCardANumber){
-            if(!(CClength>=13 && CClength<=16)){
-                $('#credit-card').after(getErrorSpan(errors.creditCardMustBeBetween13To16));
-                $('#cc-num').addClass('validation-failed');
-            }
-        }
-
-
+    if ($('#payment').val() === 'credit card') {
+        result &= validator.validateCVV();
+        result &= validator.validateZipCode();
+        result &= validator.validateCreditCardNumber();
+    }
+    if(!result){
+        e.preventDefault();
     }
 });
 
 //Function to remove validation-failed class from all places
-function removeValidationFailedClass(){
+function removeValidationFailedClass() {
     $('#cc-num').removeClass('validation-failed');
     $('#zip').removeClass('validation-failed');
     $('#cvv').removeClass('validation-failed');
     $('#name').removeClass('validation-failed');
     $('#mail').removeClass('validation-failed');
-
-
 }
 
-//Function to validate name field
-function validateNameField(){
-    let name = $('#name').val();
-    // name field can not be blank
-    if(name.length===0){
-        $('#name').addClass('validation-failed');
-        $("label[for='name']").after(getErrorSpan(errors.nameCanNotBeEmpty));
-    }
-}
 
-//Function to validate email field
-function validateEmailField(){
-    let mail = $('#mail').val();
-    //email should be correctly formatted
-    if(mail.length > 0){
-        let result = checkEmail(mail);
-        console.log(result);
-        if(!result){
-            $('#mail').addClass('validation-failed');
-            $("label[for='mail']").after(getErrorSpan(errors.emailBadFormat));
-        }
-    }
-}
 
 //When an input field gets focus again, clear previous errors
-$('#name').focus(function(){
+$('#name').focus(function () {
     $('#name').removeClass('validation-failed');
     $("label[for='name']+.error-message").remove();
     $('#name').val("");
 });
-$('#mail').focus(function(){
+$('#mail').focus(function () {
     $('#mail').removeClass('validation-failed');
     $("label[for='mail']+.error-message").remove();
     $('#mail').val("");
@@ -349,7 +284,7 @@ $('#mail').focus(function(){
 });
 
 //function that returns an error message wrapped in span element
-function getErrorSpan(errorMessage){
+function getErrorSpan(errorMessage) {
     return `<span class='error-message'>${errorMessage}</span>`;
 }
 
@@ -361,8 +296,8 @@ function checkEmail(email) {
 }
 
 //function to check if passed argument only consists of digits
-function checkIfNumber(param){
-    if(param.length===0){
+function checkIfNumber(param) {
+    if (param.length === 0) {
         return false;
     }
     let pattern = /^\d+$/g;
@@ -371,11 +306,8 @@ function checkIfNumber(param){
 }
 
 //function to get total number of checked checkboxes
-function getCheckedCheckBoxesCount(){
+function getCheckedCheckBoxesCount() {
     let checkBoxes = $(".activities  input[type='checkbox']");
-    console.log('total checkboxes:'+checkBoxes.length);
-
     let checkedCheckBoxes = checkBoxes.filter(':checked');
-    console.log("checked:"+checkedCheckBoxes.length);
     return checkedCheckBoxes.length;
 }
