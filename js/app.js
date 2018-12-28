@@ -280,29 +280,11 @@ $('#mail').focus(function () {
     $("label[for='mail']+.error-message").remove();
     $('#mail').val("");
     $('#mail+span').remove();
-
 });
 
 //function that returns an error message wrapped in span element
 function getErrorSpan(errorMessage) {
     return `<span class='error-message'>${errorMessage}</span>`;
-}
-
-//function to check email address is correct or not.
-function checkEmail(email) {
-    let pattern = /\w+@\w+\.\w{3}\b/g;
-    let result = pattern.test(email);
-    return result;
-}
-
-//function to check if passed argument only consists of digits
-function checkIfNumber(param) {
-    if (param.length === 0) {
-        return false;
-    }
-    let pattern = /^\d+$/g;
-    let result = pattern.test(param);
-    return result;
 }
 
 //function to get total number of checked checkboxes

@@ -22,7 +22,7 @@ const errors = {
 
 //javascript object to hold all related methods for field validations
 const validator = {
-    validateCheckBox : () => {
+    validateCheckBox: () => {
         //User must select at least one checkbox under the "Register for Activities" section of the form.
         if (getCheckedCheckBoxesCount() === 0) {
             $('.activities legend').after(getErrorSpan(errors.checkBoxMustBeSelected));
@@ -30,7 +30,7 @@ const validator = {
         }
         return true;
     },
-    validateCreditCardNumber : () => {
+    validateCreditCardNumber: () => {
         let creditCardNumber = $('#cc-num').val();
         let isCreditCardANumber = checkIfNumber(creditCardNumber);
         let CClength = creditCardNumber.length;
@@ -38,23 +38,23 @@ const validator = {
         if (CClength === 0) {
             $('#credit-card').after(getErrorSpan(errors.creditCardCanNotBeEmpty));
             $('#cc-num').addClass('validation-failed');
-            result=false;
+            result = false;
         }
         if (CClength > 0 && !isCreditCardANumber) {
             $('#credit-card').after(getErrorSpan(errors.creditCardMustBeDigitsOnly));
             $('#cc-num').addClass('validation-failed');
-            result=false;
+            result = false;
         }
         if (CClength > 0 && isCreditCardANumber) {
             if (!(CClength >= 13 && CClength <= 16)) {
                 $('#credit-card').after(getErrorSpan(errors.creditCardMustBeBetween13To16));
                 $('#cc-num').addClass('validation-failed');
-                result=false;
+                result = false;
             }
         }
         return result;
     },
-    validateZipCode : () => {
+    validateZipCode: () => {
         let zip = $('#zip').val();
         let isZipANumber = checkIfNumber(zip);
         let Ziplength = zip.length;
@@ -76,31 +76,31 @@ const validator = {
         }
         return result;
     },
-    validateCVV : () => {
+    validateCVV: () => {
         let cvv = $('#cvv').val();
         let isCVVANumber = checkIfNumber(cvv);
         let CVVlength = cvv.length;
-        let result=true;
+        let result = true;
         if (CVVlength === 0) {
             $('#credit-card').after(getErrorSpan(errors.cvvCanNotBeEmpty));
             $('#cvv').addClass('validation-failed');
-            result=false;
+            result = false;
         }
 
         if (CVVlength > 0 && !isCVVANumber) {
             $('#credit-card').after(getErrorSpan(errors.cvvMustBeDigitsOnly));
             $('#cvv').addClass('validation-failed');
-            result=false;
+            result = false;
         }
         if (CVVlength > 0 && isCVVANumber && CVVlength !== 3) {
             $('#credit-card').after(getErrorSpan(errors.cvvMustBe3Digits));
             $('#cvv').addClass('validation-failed');
-            result=false;
+            result = false;
         }
         return result;
     },
     //Function to validate name field
-    validateNameField : () => {
+    validateNameField: () => {
         let name = $('#name').val();
         // name field can not be blank
         if (name.length === 0) {
@@ -111,7 +111,7 @@ const validator = {
         return true;
     },
     //Function to validate email field
-    validateEmailField : () => {
+    validateEmailField: () => {
         let mail = $('#mail').val();
         let result = true;
         //email should not be empty
@@ -129,6 +129,23 @@ const validator = {
                 result = false;
             }
         }
+        return result;
+    },
+
+    //function to check email address is correct or not.
+    checkEmail: (email) => {
+        let pattern = /\w+@\w+\.\w{3}\b/g;
+        let result = pattern.test(email);
+        return result;
+    },
+
+    //function to check if passed argument only consists of digits
+    checkIfNumber: (param) => {
+        if (param.length === 0) {
+            return false;
+        }
+        let pattern = /^\d+$/g;
+        let result = pattern.test(param);
         return result;
     }
 }
