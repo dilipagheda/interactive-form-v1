@@ -239,7 +239,6 @@ Form validation
 */
 $("button[type='submit']").on('click', function (e) {
     let result=true;
-    
     //remove all error spans and .validation-failed classes first
     $('.error-message').remove();
     removeValidationFailedClass();

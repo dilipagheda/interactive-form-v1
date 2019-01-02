@@ -20,6 +20,25 @@ const errors = {
     cvvMustBe3Digits: "CVV code must be exactly 3 digits"
 };
 
+const utility = {
+       //function to check email address is correct or not.
+       checkEmail: (email) => {
+        let pattern = /\w+@\w+\.\w{3}\b/g;
+        let result = pattern.test(email);
+        return result;
+    },
+
+    //function to check if passed argument only consists of digits
+    checkIfNumber: (param) => {
+        if (param.length === 0) {
+            return false;
+        }
+        let pattern = /^\d+$/g;
+        let result = pattern.test(param);
+        return result;
+    }
+};
+
 //javascript object to hold all related methods for field validations
 const validator = {
     validateCheckBox: () => {
@@ -32,7 +51,7 @@ const validator = {
     },
     validateCreditCardNumber: () => {
         let creditCardNumber = $('#cc-num').val();
-        let isCreditCardANumber = checkIfNumber(creditCardNumber);
+        let isCreditCardANumber = utility.checkIfNumber(creditCardNumber);
         let CClength = creditCardNumber.length;
         let result = true;
         if (CClength === 0) {
@@ -56,7 +75,7 @@ const validator = {
     },
     validateZipCode: () => {
         let zip = $('#zip').val();
-        let isZipANumber = checkIfNumber(zip);
+        let isZipANumber = utility.checkIfNumber(zip);
         let Ziplength = zip.length;
         let result = true;
         if (Ziplength === 0) {
@@ -78,7 +97,7 @@ const validator = {
     },
     validateCVV: () => {
         let cvv = $('#cvv').val();
-        let isCVVANumber = checkIfNumber(cvv);
+        let isCVVANumber = utility.checkIfNumber(cvv);
         let CVVlength = cvv.length;
         let result = true;
         if (CVVlength === 0) {
@@ -122,7 +141,7 @@ const validator = {
         }
         //email should be correctly formatted
         if (mail.length > 0) {
-            let result = checkEmail(mail);
+            let result = utility.checkEmail(mail);
             if (!result) {
                 $('#mail').addClass('validation-failed');
                 $("label[for='mail']").after(getErrorSpan(errors.emailBadFormat));
@@ -131,21 +150,4 @@ const validator = {
         }
         return result;
     },
-
-    //function to check email address is correct or not.
-    checkEmail: (email) => {
-        let pattern = /\w+@\w+\.\w{3}\b/g;
-        let result = pattern.test(email);
-        return result;
-    },
-
-    //function to check if passed argument only consists of digits
-    checkIfNumber: (param) => {
-        if (param.length === 0) {
-            return false;
-        }
-        let pattern = /^\d+$/g;
-        let result = pattern.test(param);
-        return result;
-    }
 }
