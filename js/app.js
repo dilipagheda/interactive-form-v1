@@ -106,44 +106,28 @@ $('input:checkbox').change(function () {
                 break;
             case 'js-frameworks':
                 $("input[type='checkbox'][name='express']").attr('disabled', true);
-                $("input[type='checkbox'][name='build-tools']").attr('disabled', true);
                 $("input[type='checkbox'][name='express']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='build-tools']").parent().css('color', 'grey');
                 total += 100;
                 break;
             case 'js-libs':
                 $("input[type='checkbox'][name='node']").attr('disabled', true);
-                $("input[type='checkbox'][name='npm']").attr('disabled', true);
                 $("input[type='checkbox'][name='node']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='npm']").parent().css('color', 'grey');
                 total += 100;
                 break;
             case 'express':
                 $("input[type='checkbox'][name='js-frameworks']").attr('disabled', true);
-                $("input[type='checkbox'][name='build-tools']").attr('disabled', true);
                 $("input[type='checkbox'][name='js-frameworks']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='build-tools']").parent().css('color', 'grey');
                 total += 100;
                 break;
             case 'node':
                 $("input[type='checkbox'][name='js-libs']").attr('disabled', true);
-                $("input[type='checkbox'][name='npm']").attr('disabled', true);
                 $("input[type='checkbox'][name='js-libs']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='npm']").parent().css('color', 'grey');
                 total += 100;
                 break;
             case 'build-tools':
-                $("input[type='checkbox'][name='express']").attr('disabled', true);
-                $("input[type='checkbox'][name='js-frameworks']").attr('disabled', true);
-                $("input[type='checkbox'][name='express']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='js-frameworks']").parent().css('color', 'grey');
                 total += 100;
                 break;
             case 'npm':
-                $("input[type='checkbox'][name='js-libs']").attr('disabled', true);
-                $("input[type='checkbox'][name='node']").attr('disabled', true);
-                $("input[type='checkbox'][name='js-libs']").parent().css('color', 'grey');
-                $("input[type='checkbox'][name='node']").parent().css('color', 'grey');
                 total += 100;
                 break;
         }

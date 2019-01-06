@@ -113,11 +113,6 @@ button:hover {
 	background: #184c62;
 }
 
-#paypal,
-#credit-card,
-#bitcoin{
-	display: none;
-}
 .error-message{
 	display: block;
 	margin-bottom:10px;
